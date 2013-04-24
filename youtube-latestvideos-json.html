@@ -1,0 +1,113 @@
+<html>
+<head>
+  <title>YouTube Player</title>
+  <script type="text/javascript" src="http://swfobject.googlecode.com/svn/trunk/swfobject/swfobject.js"></script>
+  <script type="text/javascript">
+function loadVideo(playerUrl, autoplay) {
+  swfobject.embedSWF(
+      playerUrl + '&rel=1&border=0&fs=1&autoplay=' + 
+      (autoplay?1:0), 'player', '443', '256', '9.0.0', false,
+      false, {allowfullscreen: 'true'});
+}
+
+function showMyVideos2(data) {
+  var feed = data.feed;
+  var entries = feed.entry || [];
+  var html = ['<p class="additional">Additional Videos</p><ul class="videos">'];
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    var title = entry.title.$t.substr(0, 20);
+    var thumbnailUrl = entries[i].media$group.media$thumbnail[0].url;
+    var playerUrl = entries[i].media$group.media$content[0].url;
+    html.push('<li onclick="loadVideo(\'', playerUrl, '\', true)">',
+              '<span class="titlec">', title, '...</span><br /><img src="', 
+              thumbnailUrl, '" width="130" height="97"/>', '</span></li>');
+  }
+  html.push('</ul><br style="clear: left;"/>');
+  document.getElementById('videos').innerHTML = html.join('');
+  if (entries.length > 0) {
+    loadVideo(entries[0].media$group.media$content[0].url, false);
+  }
+}
+</script>
+<script src="http://www.google.com/uds/api?file=uds.js&v=1.0"
+    type="text/javascript"></script>
+<link href="http://www.google.com/uds/css/gsearch.css"
+    rel="stylesheet" type="text/css"/>
+<script src="http://www.google.com/uds/solutions/videobar/gsvideobar.js"
+    type="text/javascript"></script>
+<link href="http://www.google.com/uds/solutions/videobar/gsvideobar.css"
+    rel="stylesheet" type="text/css"/>
+<style>
+
+.titlec {
+  font-size: small;
+}
+ul.videos li {
+  float: left;
+  width: 10em;
+  margin-bottom: 1em;
+}
+ul.videos
+{
+  margin-bottom: 1em;
+  padding-left : 0em;
+  margin-left: 0em;
+  list-style: none;
+}
+#videoBar {
+  width : 160px;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding-top : 4px;
+  padding-right : 4px;
+  padding-left : 4px;
+  padding-bottom : 0px;
+}
+
+#videos {
+overflow: auto;
+padding: 0px;
+width: 337px;
+height: 259px;
+margin-left: 146px;
+display: block;
+float: left;
+}
+
+.additional {
+margin: 0 0 5px 0;
+font-size: 15px;
+color: #6A6A6A;
+border-bottom: 1px dotted #D7D7D7;
+width: 287px;
+}
+
+h1 {
+color: #6A6A6A;
+font-size: 18px;
+font-family: helvetica,arial,sans-serif;
+font-weight: normal;
+margin: 0;
+padding: 0;
+border-bottom: 1px solid #E1E1E1;
+margin-bottom: 15px;
+width: 801px;
+}
+</style>
+</head>
+<body>
+
+  <h1>Videos</h1>
+  <div id="playerContainer" style="width: 20em; height: 180px; float: left;">
+    <object id="player"></object>
+  </div>
+  
+  <div id="videos"></div>
+  
+  <script 
+    type="text/javascript" 
+    src="http://gdata.youtube.com/feeds/users/youtube/uploads?alt=json-in-script&callback=showMyVideos2&format=5&max-results=10">
+  </script>
+</body>
+</html>
